@@ -40,29 +40,31 @@ public class UserControllerMy {
     @GetMapping("/new")
     public String newUser(Model model) {
         List<Role> roleList = userService.roleList();
-       model.addAttribute("user", new User());
-       model.addAttribute("roleList", roleList);
+        model.addAttribute("user", new User());
+        model.addAttribute("roleList", roleList);
         return "new";
     }
+
     @PostMapping("/new")
     public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()){
-            return"new";
+        if (bindingResult.hasErrors()) {
+            return "new";
         }
         userService.addUser(user);
-        return"redirect:/admin";
+        return "redirect:/admin";
     }
 
     @GetMapping("/{id}/edit")
-    public String edit(Model model,@PathVariable("id") long id) {
+    public String edit(Model model, @PathVariable("id") long id) {
         User user = userService.getById(id);
         List<Role> roleList = userService.roleList();
-        model.addAttribute("user",user);
-        model.addAttribute("roleList",roleList);
+        model.addAttribute("user", user);
+        model.addAttribute("roleList", roleList);
         return "edit";
     }
+
     @PatchMapping("/{id}")
-    public String update(@ModelAttribute("user")@Valid User user, BindingResult bindingResult) {
+    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "edit";
         }
@@ -79,7 +81,7 @@ public class UserControllerMy {
 //    }
 
 
-//    @PostMapping("/edit/{id}")
+    //    @PostMapping("/edit/{id}")
 //    public String update(@ModelAttribute("user") User user, @PathVariable("id") long id) {
 //        userService.update(user);
 //        return "redirect:/admin";

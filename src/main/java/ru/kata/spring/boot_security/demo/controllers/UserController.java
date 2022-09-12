@@ -14,14 +14,16 @@ import java.security.Principal;
 @RequestMapping("/user")
 public class UserController {
     private final UserServiceImpl userService;
-@Autowired
+
+    @Autowired
     public UserController(UserServiceImpl userService) {
         this.userService = userService;
     }
+
     @GetMapping("")
     public String index(Principal principal, Model model) {
-    User user1 = userService.findByUsername(principal.getName());
-    model.addAttribute("user", user1);
-    return "user";
+        User user1 = userService.findByUsername(principal.getName());
+        model.addAttribute("user", user1);
+        return "user";
     }
 }
