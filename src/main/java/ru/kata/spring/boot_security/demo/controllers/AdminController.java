@@ -14,12 +14,12 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
-public class UserControllerMy {
+public class AdminController {
 
     private final UserService userService;
 
     @Autowired
-    public UserControllerMy(UserService userService) {
+    public AdminController(UserService userService) {
         this.userService = userService;
     }
 
@@ -29,13 +29,6 @@ public class UserControllerMy {
         model.addAttribute("users", userList);
         return "all_users";
     }
-//    @GetMapping("")
-//    public String startPage(Model model) {
-//    List<User> userList = userService.getAll();
-//    model.addAttribute("user",userList);
-//    model.addAttribute("user.roles", userList);
-//    return "admin";
-//    }
 
     @GetMapping("/new")
     public String newUser(Model model) {
@@ -71,21 +64,7 @@ public class UserControllerMy {
         userService.addUser(user);
         return "redirect:/admin";
     }
-//    @GetMapping("/update/{id}")
-//    public String update(@PathVariable("id") long id, Model model) {
-//    User user = userService.getById(id);
-//    List<Role> roleList = userService.roleList();
-//    model.addAttribute("user", user);
-//    model.addAttribute("listRoles", roleList);
-//    return "update";
-//    }
 
-
-    //    @PostMapping("/edit/{id}")
-//    public String update(@ModelAttribute("user") User user, @PathVariable("id") long id) {
-//        userService.update(user);
-//        return "redirect:/admin";
-//    }
     @DeleteMapping("/{id}/delete")
     public String delete(@ModelAttribute("user") User user) {
         userService.deleteUser(user.getId());
