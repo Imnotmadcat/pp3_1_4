@@ -12,7 +12,7 @@ import java.security.Principal;
 
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class UserController {   
     private final UserServiceImpl userService;
 
     @Autowired
