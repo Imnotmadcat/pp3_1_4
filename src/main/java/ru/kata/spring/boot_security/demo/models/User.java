@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.models;
 
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,36 +10,60 @@ import java.util.Set;
 
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "username", unique = true)
-    private String username;
+    @Column(name = "id")
+    private int id;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "lastname")
-    private String lastname;
-
-    @Column(name = "password")
-    private String password;
+    @Column(name = "last_name")
+    private String lastName;
 
     @Column(name = "email")
     private String email;
 
+    @Column(name = "age")
+    private byte age;
+
+    @Column(name = "password")
+    private String password;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Collection<Role> roles;
+    private Set<Role> roles;
+    public User() {
+
+    }
+
+    public User(String name, String lastName, String email, byte age, String password, Set<Role> roles) {
+        this.name = name;
+        this.lastName = lastName;
+        this.email = email;
+        this.age = age;
+        this.password = password;
+        this.roles = roles;
+    }
+
+    public User(String name, String lastName, String email, byte age) {
+        this.name = name;
+        this.lastName = lastName;
+        this.email = email;
+        this.age = age;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles() ;
+        return getRoles();
+    }
+
+    @Override
+    public String getUsername() {
+        return name;
     }
 
     @Override
@@ -61,41 +86,12 @@ public class User implements UserDetails {
         return true;
     }
 
-    public User() {
-    }
-
-    public User(String username, String name, String lastname, String password, String email, Set<Role> roles) {
-        this.username = username;
-        this.name = name;
-        this.lastname = lastname;
-        this.password = password;
-        this.email = email;
-        this.roles = roles;
-    }
-
-    public User(String username, String name, String lastname, String password, Set<Role> roles) {
-        this.username = username;
-        this.name = name;
-        this.lastname = lastname;
-        this.password = password;
-        this.roles = roles;
-    }
-
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getName() {
@@ -106,12 +102,28 @@ public class User implements UserDetails {
         this.name = name;
     }
 
-    public String getLastname() {
-        return lastname;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public byte getAge() {
+        return age;
+    }
+
+    public void setAge(byte age) {
+        this.age = age;
     }
 
     @Override
@@ -123,19 +135,11 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Collection<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Collection<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 }
