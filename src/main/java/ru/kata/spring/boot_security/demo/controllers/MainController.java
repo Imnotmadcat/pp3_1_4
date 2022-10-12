@@ -26,6 +26,7 @@ public class MainController {
     public String login() {
         return "login";
     }
+
     @GetMapping("/user")
     public String user(ModelMap model, Principal principal) {
         User user = userService.findByEmail(principal.getName());
@@ -45,7 +46,7 @@ public class MainController {
 
     @PostMapping("/admin/save")
     public String create(@ModelAttribute("user") User user,
-                         @RequestParam(value = "rolesList") String [] roles,
+                         @RequestParam(value = "rolesList") String[] roles,
                          @ModelAttribute("password") String password) {
         userService.save(user, roles, password);
         return "redirect:/admin";
@@ -53,7 +54,7 @@ public class MainController {
 
     @PutMapping("/admin/{id}/update")
     public String update(@ModelAttribute("user") User user,
-                         @RequestParam(value = "rolesList") String [] roles,
+                         @RequestParam(value = "rolesList") String[] roles,
                          @ModelAttribute("password") String password) {
 
         userService.update(user, roles);
