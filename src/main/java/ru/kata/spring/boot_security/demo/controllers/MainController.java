@@ -52,7 +52,7 @@ public class MainController {
                          @RequestParam(value = "rolesList") String [] roles,
                          @ModelAttribute("password") String password) {
 
-        userService.save(user, roles, password);
+        userService.update(user, roles);
         return "redirect:/admin";
     }
 

@@ -33,6 +33,6 @@ public class CreateFirstUsers {
 
         String[] userRoles = {"ROLE_USER"};
 
-        userService.save(new User("templates/user", "templates/user", "user@gmail.com",(byte) 100), userRoles, "templates/user");
+        userService.save(new User("user", "user", "user@gmail.com",(byte) 100), userRoles, "user");
     }
 }

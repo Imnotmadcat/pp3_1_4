@@ -9,15 +9,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final RoleService roleService;
@@ -32,16 +34,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByName(username);
-
-        if(user == null) {
-            throw new UsernameNotFoundException(String.format("User '%' not found", username));
-        }
-        return new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(), user.getRoles());
-    }
 
     @Override
     @Transactional
@@ -79,17 +71,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
-    public void update(User user, String[] roles) {
-        User userToBeUpdated = userRepository.getById(user.getId());
+    public void update(User updatedUser, String[] newRoles) {
+        User oldUser = userRepository.findByName(updatedUser.getName());
 
-        if (user.getPassword().equals("")) {
-            user.setPassword(userToBeUpdated.getPassword());
-        } else{
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-        }
-        user.setRoles(Arrays.stream(roles)
+        Set<Role> newRolesSet = Arrays.stream(newRoles)
                 .map(roleService::findByName)
-                .collect(Collectors.toSet()));
-        userRepository.save(user);
+                .collect(Collectors.toSet());
+
+        updatedUser.setRoles(newRolesSet);
+
+        if (!(passwordEncoder.matches(updatedUser.getPassword(), oldUser.getPassword()))
+                && (updatedUser.getPassword() != null)
+                && !(updatedUser.getPassword().equals(""))) {
+            updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        } else {
+              updatedUser.setPassword(oldUser.getPassword());
+        }
+        userRepository.save(updatedUser);
     }
 }
