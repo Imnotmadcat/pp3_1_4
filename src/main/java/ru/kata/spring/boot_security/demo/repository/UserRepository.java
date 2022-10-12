@@ -9,4 +9,5 @@ import ru.kata.spring.boot_security.demo.models.User;
 public interface UserRepository extends JpaRepository<User, Integer> {
 
     User findByName(String userName);
+    User findByEmail(String email);
 }

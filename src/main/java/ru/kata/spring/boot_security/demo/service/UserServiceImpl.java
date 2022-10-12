@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public List<User> index() {
+    public List<User> allUsers() {
         return userRepository.findAll();
     }
 
@@ -65,8 +65,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User findByName(String name) {
-        return userRepository.findByName(name);
+    public User findByEmail(String email) {
+        return userRepository.findByName(email);
     }
 
     @Override

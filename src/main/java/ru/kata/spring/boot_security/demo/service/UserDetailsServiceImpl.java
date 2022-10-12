@@ -10,7 +10,7 @@ import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserDetailsServiceImpl(UserRepository userRepository) {
@@ -19,11 +19,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByName(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
 
         if(user == null) {
-            throw new UsernameNotFoundException(String.format("User '%' not found", username));
+            throw new UsernameNotFoundException(String.format("User %s not found", email));
         }
         return new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(), user.getRoles());
     }

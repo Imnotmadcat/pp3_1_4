@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserService {
 
-    List<User> index();
+    List<User> allUsers();
 
     User show(int id);
 
@@ -14,7 +14,7 @@ public interface UserService {
 
     void delete(int id);
 
-    User findByName(String name);
+    User findByEmail(String email);
 
     void update(User user, String[] roles);
 }

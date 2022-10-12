@@ -22,18 +22,22 @@ public class MainController {
         this.userService = userService;
     }
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
     @GetMapping("/user")
     public String user(ModelMap model, Principal principal) {
-        User user = userService.findByName(principal.getName());
+        User user = userService.findByEmail(principal.getName());
         model.addAttribute("user", user);
         return "user/user";
     }
 
     @GetMapping("/admin")
     public String index(Model model, Principal principal) {
-        User user = userService.findByName(principal.getName());
+        User user = userService.findByEmail(principal.getName());
         User userNew = new User();
-        model.addAttribute("users", userService.index());
+        model.addAttribute("users", userService.allUsers());
         model.addAttribute("user", user);
         model.addAttribute("userNew", userNew);
         return "admin/index";
