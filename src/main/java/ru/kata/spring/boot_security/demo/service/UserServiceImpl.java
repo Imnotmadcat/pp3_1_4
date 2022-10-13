@@ -2,12 +2,13 @@ package ru.kata.spring.boot_security.demo.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
 import java.util.Arrays;
@@ -16,63 +17,54 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
-    private final RoleService roleService;
+    private final RoleRepository roleRepository;
 
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    @Lazy
-    public UserServiceImpl(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.roleService = roleService;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-
     @Override
-    public List<User> allUsers() {
+    public List<User> findAllUsers() {
         return userRepository.findAll();
     }
 
     @Override
-    public User show(int id) {
-        return userRepository.getById(id);
-    }
-
-    @Override
-    public void save(User user, String[] roles, String password) {
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void saveUser(User user, String[] roles, String password) {
         user.setPassword(passwordEncoder.encode(password));
         user.setRoles(Arrays.stream(roles)
-                .map(roleService::findByName)
+                .map(roleRepository::findRoleByName)
                 .collect(Collectors.toSet()));
         userRepository.save(user);
     }
 
     @Override
-    public void delete(int id) {
+    @Transactional
+    public void deleteUser(int id) {
         userRepository.deleteById(id);
     }
 
     @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User findUserById(int id) {
+        return userRepository.findUserById(id);
     }
 
     @Override
-    public User findById(int id) {
-        return userRepository.findById(id);
-    }
-
-    @Override
-    public void update(User updatedUser, String[] newRoles) {
-        User oldUser = findById(updatedUser.getId());
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void updateUser(User updatedUser, String[] newRoles) {
+        User oldUser = findUserById(updatedUser.getId());
 
         Set<Role> newRolesSet = Arrays.stream(newRoles)
-                .map(roleService::findByName)
+                .map(roleRepository::findRoleByName)
                 .collect(Collectors.toSet());
 
         updatedUser.setRoles(newRolesSet);

@@ -24,15 +24,15 @@ public class CreateFirstUsers {
 
     @PostConstruct
     private void createTestUsers() {
-        roleService.save(new Role("ROLE_ADMIN"));
-        roleService.save(new Role("ROLE_USER"));
+        roleService.saveRole(new Role("ROLE_ADMIN"));
+        roleService.saveRole(new Role("ROLE_USER"));
 
         String[] adminRoles = {"ROLE_ADMIN", "ROLE_USER"};
 
-        userService.save(new User("admin", "admin", "admin@gmail.com",(byte) 100), adminRoles, "admin");
+        userService.saveUser(new User("admin", "admin", "admin@gmail.com",(byte) 100), adminRoles, "admin");
 
         String[] userRoles = {"ROLE_USER"};
 
-        userService.save(new User("user", "user", "user@gmail.com",(byte) 100), userRoles, "user");
+        userService.saveUser(new User("user", "user", "user@gmail.com",(byte) 100), userRoles, "user");
     }
 }

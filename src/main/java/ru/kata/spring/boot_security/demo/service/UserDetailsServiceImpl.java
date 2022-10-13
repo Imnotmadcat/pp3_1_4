@@ -1,17 +1,20 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
+import java.util.Optional;
+
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
+    private int id;
 
     @Autowired
     public UserDetailsServiceImpl(UserRepository userRepository) {
@@ -19,13 +22,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
-
-        if (user == null) {
-            throw new UsernameNotFoundException(String.format("User %s not found", email));
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public User loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<User> user = Optional.ofNullable(userRepository.findUserByEmail(email));
+        if (user.isPresent()) {
+            id = user.get().getId();
+            return user.get();
         }
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), user.getRoles());
+        return userRepository.findUserById(id);
     }
 }
