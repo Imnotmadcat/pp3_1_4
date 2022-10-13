@@ -41,7 +41,7 @@ public class AdminController {
 
     @PutMapping("/admin/{id}/update")
     public String update(@ModelAttribute("user") User user,
-                         @RequestParam(value = "rolesList", required = false) String[] roles,
+                         @RequestParam(value = "rolesList") String[] roles,
                          @ModelAttribute("password") String password) {
 
         userService.update(user, roles);

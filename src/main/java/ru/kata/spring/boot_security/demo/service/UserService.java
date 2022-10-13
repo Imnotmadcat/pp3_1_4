@@ -13,7 +13,7 @@ public interface UserService {
     void save(User user, String[] roles, String pass);
 
     void delete(int id);
-
+    User findById (int id);
     User findByEmail(String email);
 
     void update(User user, String[] roles);

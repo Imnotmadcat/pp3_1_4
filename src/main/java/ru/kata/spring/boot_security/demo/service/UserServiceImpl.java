@@ -59,12 +59,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByName(email);
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public User findById(int id) {
+        return userRepository.findById(id);
     }
 
     @Override
     public void update(User updatedUser, String[] newRoles) {
-        User oldUser = userRepository.getById(updatedUser.getId());
+        User oldUser = findById(updatedUser.getId());
 
         Set<Role> newRolesSet = Arrays.stream(newRoles)
                 .map(roleService::findByName)
