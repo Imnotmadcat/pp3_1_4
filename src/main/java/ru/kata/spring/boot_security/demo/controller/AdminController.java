@@ -9,12 +9,14 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
+import java.util.Optional;
 
 
 @Controller
 public class AdminController {
 
     private final UserService userService;
+    private int id;
 
     @Autowired
     public AdminController(UserService userService) {
@@ -23,10 +25,25 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String showAllUsers(Model model, Principal principal) {
-        User user = userService.findByEmail(principal.getName());
+        /* Проблема с редактированием пользователя была в том,
+        что я получаю пользователя из БД через Email, доставая его через principal
+        но после того, как я делаю новый Email в Edit текущему пользователю,
+        то происходит ошибка, так как в principal старый
+        email и он не находит в БД этого пользователя.
+        Я нашёл такое решение через Optional, но это выглядит как жуткий костыль
+        Как сделать более правильно?
+        */
+
+//  После смены email. пользователь становится Null но я использую старый id
+//  который сохраняю в первый раз
+        Optional<User> user = Optional.ofNullable(userService.findByEmail(principal.getName()));
+        if (user.isPresent()) {
+            id = userService.findByEmail(principal.getName()).getId();
+        }
+        User user1 = userService.findById(id);
         User userNew = new User();
         model.addAttribute("users", userService.allUsers());
-        model.addAttribute("user", user);
+        model.addAttribute("user", user1);
         model.addAttribute("userNew", userNew);
         return "admin/index";
     }
