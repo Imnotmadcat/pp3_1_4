@@ -3,14 +3,11 @@ package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.kata.spring.boot_security.demo.models.Role;
-import ru.kata.spring.boot_security.demo.models.User;
+import ru.kata.spring.boot_security.demo.model.Role;
+import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
 import java.util.Arrays;
@@ -19,6 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
@@ -36,19 +34,16 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    @Transactional
     public List<User> allUsers() {
         return userRepository.findAll();
     }
 
     @Override
-    @Transactional
     public User show(int id) {
         return userRepository.getById(id);
     }
 
     @Override
-    @Transactional
     public void save(User user, String[] roles, String password) {
         user.setPassword(passwordEncoder.encode(password));
         user.setRoles(Arrays.stream(roles)
@@ -58,21 +53,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public void delete(int id) {
         userRepository.deleteById(id);
     }
 
     @Override
-    @Transactional
     public User findByEmail(String email) {
         return userRepository.findByName(email);
     }
 
     @Override
-    @Transactional
     public void update(User updatedUser, String[] newRoles) {
-        User oldUser = userRepository.findByName(updatedUser.getName());
+        User oldUser = userRepository.getById(updatedUser.getId());
 
         Set<Role> newRolesSet = Arrays.stream(newRoles)
                 .map(roleService::findByName)

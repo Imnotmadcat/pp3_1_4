@@ -190,9 +190,10 @@
                                                                                         size="2"
                                                                                         multiple>
                                                                                     <option th:value="ROLE_ADMIN"
-                                                                                            th:text="ADMIN"></option>
+                                                                                            th:text="ADMIN" selected></option>
+
                                                                                     <option th:value="ROLE_USER"
-                                                                                            th:text="USER"></option>
+                                                                                            th:text="USER" selected></option>
                                                                                 </select>
                                                                             </div>
 
@@ -348,8 +349,10 @@
                                                           th:object="${userNew}">
 
                                                         <div class="form-group text-center">
-                                                            <label class="font-weight-bold ">First name </label>
-                                                            <input type="text" class="form-control" th:field="*{name}"
+                                                            <label for="firstName" class="font-weight-bold ">First name </label>
+                                                            <input type="text" class="form-control"
+                                                                   th:field="*{name}"
+                                                                   id="firstName"
                                                                    placeholder="First name"/>
                                                         </div>
 
