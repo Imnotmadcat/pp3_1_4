@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
@@ -12,6 +11,7 @@ import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import java.util.Optional;
 
 @Component
+@Transactional
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
     private int id;
@@ -22,7 +22,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public User loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> user = Optional.ofNullable(userRepository.findUserByEmail(email));
         if (user.isPresent()) {

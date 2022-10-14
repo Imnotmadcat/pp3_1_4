@@ -1,10 +1,8 @@
 package ru.kata.spring.boot_security.demo.service;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
@@ -38,7 +36,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional
     public void saveUser(User user, String[] roles, String password) {
         user.setPassword(passwordEncoder.encode(password));
         user.setRoles(Arrays.stream(roles)
@@ -59,7 +57,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional
     public void updateUser(User updatedUser, String[] newRoles) {
         User oldUser = findUserById(updatedUser.getId());
 

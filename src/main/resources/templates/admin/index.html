@@ -159,7 +159,7 @@
                                                                             <div class="form-group text-center">
                                                                                 <label for="editAge"
                                                                                        class="font-weight-bold">Age
-                                                                                    </label>
+                                                                                </label>
                                                                                 <input class="form-control form-control-sm"
                                                                                        id="editAge" name="Age"
                                                                                        th:value="*{user.getAge()}"
@@ -188,12 +188,13 @@
                                                                                 <select class="form-control"
                                                                                         name="rolesList" id="editRoles"
                                                                                         size="2"
-                                                                                        multiple>
+                                                                                        multiple
+                                                                                        required>
                                                                                     <option th:value="ROLE_ADMIN"
-                                                                                            th:text="ADMIN" ></option>
+                                                                                            th:text="ADMIN"></option>
 
                                                                                     <option th:value="ROLE_USER"
-                                                                                            th:text="USER" selected></option>
+                                                                                            th:text="USER"></option>
                                                                                 </select>
                                                                             </div>
 
@@ -349,7 +350,8 @@
                                                           th:object="${userNew}">
 
                                                         <div class="form-group text-center">
-                                                            <label for="firstName" class="font-weight-bold ">First name </label>
+                                                            <label for="firstName" class="font-weight-bold ">First
+                                                                name </label>
                                                             <input type="text" class="form-control"
                                                                    th:field="*{name}"
                                                                    id="firstName"
