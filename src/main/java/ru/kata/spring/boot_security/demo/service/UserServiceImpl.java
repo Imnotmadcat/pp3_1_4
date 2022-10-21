@@ -44,6 +44,12 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toSet()));
         userRepository.save(user);
     }
+    @Override
+    @Transactional
+    public void saveUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+    }
 
     @Override
     @Transactional
@@ -66,7 +72,13 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toSet());
 
         updatedUser.setRoles(newRolesSet);
+        updateUser(updatedUser);
 
+    }
+    @Override
+    @Transactional
+    public void updateUser(User updatedUser) {
+        User oldUser = findUserById(updatedUser.getId());
         if (!(passwordEncoder.matches(updatedUser.getPassword(), oldUser.getPassword()))
                 && (updatedUser.getPassword() != null)
                 && !(updatedUser.getPassword().equals(""))) {
