@@ -22,12 +22,12 @@ public class RestControllers {
     private final UserService userService;
     private final RoleService roleService;
 
-    @Autowired
-    public RestControllers(UserService userService, UserDetailsServiceImpl userDetailsServiceimpl, RoleService roleService) {
+    public RestControllers(UserService userService, RoleService roleService, UserDetailsServiceImpl userDetailsServiceimpl) {
         this.userService = userService;
-        this.userDetailsServiceimpl = userDetailsServiceimpl;
         this.roleService = roleService;
+        this.userDetailsServiceimpl = userDetailsServiceimpl;
     }
+
 
     @GetMapping("/admin/roles")
     public ResponseEntity<List<Role>> getAllRoles() {
@@ -62,7 +62,7 @@ public class RestControllers {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<User> getCurrentUser(Principal principal) {
-        return new ResponseEntity<>(userDetailsServiceimpl.loadUserByUsername(principal.getName()), HttpStatus.OK);
+    public ResponseEntity<User> getCurrentUser() {
+        return new ResponseEntity<>((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(), HttpStatus.OK);
     }
 }
