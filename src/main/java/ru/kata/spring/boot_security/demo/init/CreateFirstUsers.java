@@ -24,8 +24,8 @@ public class CreateFirstUsers {
 
     @PostConstruct
     private void createTestUsers() {
-        roleService.saveRole(new Role("ROLE_ADMIN"));
-        roleService.saveRole(new Role("ROLE_USER"));
+        roleService.saveRole(new Role("ROLE_ADMIN", "ADMIN"));
+        roleService.saveRole(new Role("ROLE_USER", "USER"));
 
         String[] adminRoles = {"ROLE_ADMIN", "ROLE_USER"};
 

@@ -62,7 +62,7 @@ public class RestControllers {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<User> getCurrentUser() {
-        return new ResponseEntity<>((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(), HttpStatus.OK);
+    public ResponseEntity<User> getCurrentUser(Principal principal) {
+        return new ResponseEntity<>(userDetailsServiceimpl.loadUserByUsername(principal.getName()), HttpStatus.OK);
     }
 }
