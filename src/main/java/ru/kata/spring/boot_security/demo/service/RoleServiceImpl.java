@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class RoleServiceImpl implements RoleService {
@@ -22,4 +24,8 @@ public class RoleServiceImpl implements RoleService {
         roleRepository.save(role);
     }
 
+    @Override
+    public List<Role> findAllRoles() {
+        return roleRepository.findAll();
+    }
 }

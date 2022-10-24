@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserDetailsServiceImpl;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
@@ -18,33 +20,40 @@ public class RestControllers {
 
     private final UserDetailsServiceImpl userDetailsServiceimpl;
     private final UserService userService;
+    private final RoleService roleService;
 
     @Autowired
-    public RestControllers(UserService userService, UserDetailsServiceImpl userDetailsServiceimpl) {
+    public RestControllers(UserService userService, UserDetailsServiceImpl userDetailsServiceimpl, RoleService roleService) {
         this.userService = userService;
         this.userDetailsServiceimpl = userDetailsServiceimpl;
+        this.roleService = roleService;
+    }
+
+    @GetMapping("/admin/roles")
+    public ResponseEntity<List<Role>> getAllRoles() {
+        return new ResponseEntity<>(roleService.findAllRoles(), HttpStatus.OK);
     }
 
     @GetMapping("/admin/users")
-    public List<User> showAllUsers() {
-        return userService.findAllUsers();
+    public ResponseEntity<List<User>> getAllUsers() {
+        return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/admin/users/{id}")
-    public User showUser(@PathVariable int id) {
-        return userService.findUserById(id);
+    public ResponseEntity<User> getUserById(@PathVariable("id") User user) {
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping("/admin/users")
-    public User createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@RequestBody User user) {
         userService.saveUser(user);
-        return userDetailsServiceimpl.loadUserByUsername(user.getUsername());
+        return new ResponseEntity<>(userService.findUserById(user.getId()), HttpStatus.OK);
     }
 
     @PatchMapping("/admin/users/{id}")
-    public User updateUser(@RequestBody User user) {
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
         userService.updateUser(user);
-        return user;
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @DeleteMapping("/admin/users/{id}")
@@ -53,7 +62,7 @@ public class RestControllers {
     }
 
     @GetMapping("/user")
-    public  User getCurrentUser(Principal principal) {
-        return userDetailsServiceimpl.loadUserByUsername(principal.getName());
+    public ResponseEntity<User> getCurrentUser(Principal principal) {
+        return new ResponseEntity<>(userDetailsServiceimpl.loadUserByUsername(principal.getName()), HttpStatus.OK);
     }
 }
