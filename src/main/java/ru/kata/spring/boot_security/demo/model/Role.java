@@ -68,6 +68,14 @@ public class Role implements GrantedAuthority {
         this.users = users;
     }
 
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

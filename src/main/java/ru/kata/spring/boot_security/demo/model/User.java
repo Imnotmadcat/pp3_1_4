@@ -23,7 +23,7 @@ public class User implements UserDetails {
     private String name;
 
     @Column(name = "last_name")
-    private String lastName;
+    private String lastname;
 
     @Column(name = "email")
     private String email;
@@ -43,18 +43,18 @@ public class User implements UserDetails {
 
     }
 
-    public User(String name, String lastName, String email, byte age, String password, Set<Role> roles) {
+    public User(String name, String lastname, String email, byte age, String password, Set<Role> roles) {
         this.name = name;
-        this.lastName = lastName;
+        this.lastname = lastname;
         this.email = email;
         this.age = age;
         this.password = password;
         this.roles = roles;
     }
 
-    public User(String name, String lastName, String email, byte age) {
+    public User(String name, String lastname, String email, byte age) {
         this.name = name;
-        this.lastName = lastName;
+        this.lastname = lastname;
         this.email = email;
         this.age = age;
     }
@@ -105,12 +105,12 @@ public class User implements UserDetails {
         this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastname(String lastName) {
+        this.lastname = lastName;
     }
 
     public String getEmail() {
@@ -154,7 +154,7 @@ public class User implements UserDetails {
 
         if (age != user.age) return false;
         if (!name.equals(user.name)) return false;
-        if (!lastName.equals(user.lastName)) return false;
+        if (!lastname.equals(user.lastname)) return false;
         if (!email.equals(user.email)) return false;
         if (!password.equals(user.password)) return false;
         return roles.equals(user.roles);
@@ -163,7 +163,7 @@ public class User implements UserDetails {
     @Override
     public int hashCode() {
         int result = name.hashCode();
-        result = 31 * result + lastName.hashCode();
+        result = 31 * result + lastname.hashCode();
         result = 31 * result + email.hashCode();
         result = 31 * result + (int) age;
         result = 31 * result + password.hashCode();
@@ -174,7 +174,7 @@ public class User implements UserDetails {
     @Override
     public String toString() {
         return name + " "
-                + lastName + " "
+                + lastname + " "
                 + email + " "
                 + age;
     }
