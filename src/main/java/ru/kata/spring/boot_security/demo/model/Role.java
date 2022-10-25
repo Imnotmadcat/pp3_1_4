@@ -19,9 +19,6 @@ public class Role implements GrantedAuthority {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "label")
-    private String label;
-
     @JsonIgnore
     @Transient
     @ManyToMany(mappedBy = "roles")
@@ -36,7 +33,6 @@ public class Role implements GrantedAuthority {
 
     public Role(String name, String label) {
         this.name = name;
-        this.label = label;
     }
 
     @Override
@@ -68,25 +64,17 @@ public class Role implements GrantedAuthority {
         this.users = users;
     }
 
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Role role = (Role) o;
-        return  name.equals(role.name) && label.equals(role.label);
+        return  name.equals(role.name) ;
     }
 
     @Override
     public int hashCode() {
-        return (name.hashCode() * 31) + (label.hashCode()* 31);
+        return (name.hashCode() * 31);
     }
 
     @Override

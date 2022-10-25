@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateUser(User updatedUser, String[] newRoles) {
-        User oldUser = findUserById(updatedUser.getId());
+//        User oldUser = findUserById(updatedUser.getId());
 
         Set<Role> newRolesSet = Arrays.stream(newRoles)
                 .map(roleRepository::findRoleByName)
@@ -79,6 +79,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updateUser(User updatedUser) {
         User oldUser = findUserById(updatedUser.getId());
+
         if (!(passwordEncoder.matches(updatedUser.getPassword(), oldUser.getPassword()))
                 && (updatedUser.getPassword() != null)
                 && !(updatedUser.getPassword().equals(""))) {

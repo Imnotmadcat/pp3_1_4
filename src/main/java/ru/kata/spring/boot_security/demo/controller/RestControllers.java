@@ -47,7 +47,7 @@ public class RestControllers {
     @PostMapping("/admin/users")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         userService.saveUser(user);
-        return new ResponseEntity<>(userService.findUserById(user.getId()), HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PatchMapping("/admin/users/{id}")

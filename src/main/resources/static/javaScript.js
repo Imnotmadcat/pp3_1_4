@@ -18,7 +18,7 @@ let currentUser = {
     },
     getRoleLabelList: () => {
         let roles = []
-        currentUser.user.roles.forEach(role => roles.push(role.label))
+        currentUser.user.roles.forEach(role => roles.push(role.name.slice(5)))
         return roles
     }
 }
@@ -71,7 +71,7 @@ async function updateUserTable() {
         let button_edit   = '<button class="btn btn-info user-edit-button" data-toggle="modal" data-target="#userEditModal" data-user-id="'+user.id+'">Edit</button> '
         let button_delete = '<button class="btn btn-danger user-delete-button" data-toggle="modal" data-target="#userDeleteModal" data-user-id="'+user.id+'">Delete</button>'
         let roles = []
-        user.roles.forEach(role => roles.push(role.label))
+        user.roles.forEach(role => roles.push(role.name.slice(5)))
         let row = "<tr>" +
             "<td>"+user.id+"</td>" +
             "<td>"+user.name+"</td>" +
@@ -89,7 +89,7 @@ async function updateUserTable() {
 async function updateRolesInNewUserForm() {
     let select = $('#newUserForm select')
     select.html('')
-    allRoles.list.forEach(role => select.append("<option value='" + JSON.stringify(role) + "'>" + role.label))
+    allRoles.list.forEach(role => select.append("<option value='" + JSON.stringify(role) + "'>" + role.name.slice(5)))
 }
 
 
@@ -145,11 +145,11 @@ $(document).ready( async function() {
         $('#userEditForm #edit_lastname').val(user.lastname)
         $('#userEditForm #edit_age').val(user.age)
         $('#userEditForm #edit_Email').val(user.email)
-        $('#userEditForm #edit_password').val(user.email)
+        $('#userEditForm #edit_password').val(user.password)
         let select = $('#userEditForm').find('#edit_roles')
         select.html('')
-        allRoles.list.forEach(role => select.append("<option value='"+JSON.stringify(role)+"'>"+role.label))
-        user.roles.forEach(role => select.find('option[value='+role.name+']').prop('selected', true))
+        allRoles.list.forEach(role => select.append("<option value='"+JSON.stringify(role.name)+"'>"+role.name.slice(5)))
+        // user.roles.name.forEach(role => select.find("<option value='"+role.name+"'>").prop('selected', true))
     })
 
     $('#userTable').on('click', '.user-delete-button', function () {
@@ -163,7 +163,7 @@ $(document).ready( async function() {
         $('#userDeleteForm #delete_age').val(user.age)
         $('#userDeleteForm #delete_Email').val(user.email)
         $('#userDeleteForm').find('#delete_roles').html('')
-        user.roles.forEach(role => $('#userDeleteForm').find('#delete_roles').append('<option value="'+role.name+'">'+role.label))
+        user.roles.forEach(role => $('#userDeleteForm').find('#delete_roles').append('<option value="'+role.name+'">'+role.name.slice(5)))
     })
 
     $('#userDeleteForm').on("submit", async function(event) {
