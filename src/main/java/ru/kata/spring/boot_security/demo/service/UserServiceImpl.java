@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updateUser(User updatedUser) {
         User oldUser = findUserById(updatedUser.getId());
-
+        Set<Role> newRoles = updatedUser.getRoles();
         if (!(passwordEncoder.matches(updatedUser.getPassword(), oldUser.getPassword()))
                 && (updatedUser.getPassword() != null)
                 && !(updatedUser.getPassword().equals(""))) {
