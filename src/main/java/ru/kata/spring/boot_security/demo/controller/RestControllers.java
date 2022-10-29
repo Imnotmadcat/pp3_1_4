@@ -57,8 +57,8 @@ public class RestControllers {
     }
 
     @DeleteMapping("/admin/users/{id}")
-    public void deleteUser(@PathVariable("id") User user) {
-        userService.deleteUser(user.getId());
+    public void deleteUser(@PathVariable int id) {
+        userService.deleteUser(id);
     }
 
     @GetMapping("/user")

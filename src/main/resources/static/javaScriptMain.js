@@ -17,8 +17,11 @@
 $(document).ready(async function () {
     await currentUser.updateCurrentUserInfo()
     await showMainPageByRole()
+    await openDeleteForm()
+
 
 });
+
 let currentUser = {
     user: {},
     updateCurrentUserInfo: async () => {
@@ -120,9 +123,42 @@ async function showMainPageByRole() {
     }
 }
 
+async function openDeleteForm() {
+    await $('#allUsersTable').on('click', '.user-delete-button', function () {
+        let userId = Number($(this).attr('data-user-id'))
+        let deletingUserInfo = users.userMap.get(userId)
 
+        $('#delete_id').val(deletingUserInfo.id)
+        $('#delete_name').val(deletingUserInfo.name)
+        $('#delete_lastname').val(deletingUserInfo.lastname)
+        $('#delete_age').val(deletingUserInfo.age)
+        $('#delete_Email').val(deletingUserInfo.email)
+        let domRoles = $('#delete_roles').empty();
+        deletingUserInfo.roles.forEach(role =>domRoles.append('<option value="' + role.name + '">' + role.name.slice(5)))
 
+        console.log(deletingUserInfo.email)
 
+    });
+    await deleteUser()
+}
+async function deleteUser() {
+    $('#userDeleteForm').on("submit", async function (event) {
+        event.preventDefault();
+        let userId = Number($(this).find('#delete_id').val())
 
+        let response = await fetch('/api/admin/users/' + userId, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        if (response.status === 200) {
+            await users.removeUserById(userId)
+            $('#userDeleteModal').modal('hide');
+        } else {
+            console.log(response.status)
+        }
+    })
+}
 
 
