@@ -15,6 +15,5 @@ public interface UserService {
 
     User findUserById(int id);
 
-    void updateUser(User user, String[] roles);
     void updateUser(User user);
 }

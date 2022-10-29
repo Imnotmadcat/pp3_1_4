@@ -42,11 +42,21 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toSet()));
         userRepository.save(user);
     }
+
     @Override
     @Transactional
-    public void saveUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+    public void saveUser(User newUser) {
+        fixProblemWithRoles(newUser);
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        userRepository.save(newUser);
+    }
+
+    private void fixProblemWithRoles(User user) {
+        Set<Role> newRoles = new HashSet<>();
+        for (Role role : user.getRoles()) {
+            newRoles.add(roleRepository.findRoleByName(role.getName()));
+        }
+        user.setRoles(newRoles);
     }
 
     @Override
@@ -62,29 +72,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateUser(User updatedUser, String[] newRoles) {
-//        User oldUser = findUserById(updatedUser.getId());
-
-        Set<Role> newRolesSet = Arrays.stream(newRoles)
-                .map(roleRepository::findRoleByName)
-                .collect(Collectors.toSet());
-
-        updatedUser.setRoles(newRolesSet);
-        updateUser(updatedUser);
-
-    }
-    @Override
-    @Transactional
     public void updateUser(User updatedUser) {
+        fixProblemWithRoles(updatedUser);
+
+        //если пароль не менялся, не делает перекодировку
         User oldUser = findUserById(updatedUser.getId());
-        Set<Role> newRoles = new HashSet<>();
-        Iterator<Role> roleIterator =updatedUser.getRoles().iterator();
-        while (roleIterator.hasNext()){
-        newRoles.add(roleRepository.findRoleByName(roleIterator.next().getName()));
-        }
-        updatedUser.setRoles(newRoles);
-        System.out.println(newRoles);
-        if (!(passwordEncoder.matches(updatedUser.getPassword(), oldUser.getPassword()))
+
+        if (!(updatedUser.getPassword().equals(oldUser.getPassword()))
                 && (updatedUser.getPassword() != null)
                 && !(updatedUser.getPassword().equals(""))) {
             updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));

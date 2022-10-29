@@ -1,24 +1,7 @@
-// Текущий пользователь
-// Все пользователи
-// Все роли
-
-
-//Получение пользователя по id
-//
-// удаление пользователя
-// редактирование пользователя
-// создание пользователя
-//
-// удаление admin panel если user
-// обновление панели
-// обновление текущего юзера
-//
-
 $(document).ready(async function () {
     await currentUser.updateCurrentUserInfo()
-    await showMainPageByRole()
-    await openDeleteForm()
-    await openEditForm()
+    await changeMainPageIfAdmin()
+
 });
 
 let currentUser = {
@@ -109,12 +92,16 @@ async function updateAllUsersPanel() {
     })
 }
 
-async function showMainPageByRole() {
+async function changeMainPageIfAdmin() {
     let page = location.pathname.substring(1)
     $('#v-pills-' + page + '-tab').tab('show')
     if (currentUser.hasRole("ROLE_ADMIN")) {
         await users.updateAllUsersInfo()
         await allRoles.getAllRoles()
+
+        await openDeleteForm()
+        await openEditForm()
+        await openNewUserForm()
     } else {
         document.body.querySelector("#v-pills-admin-tab").remove();
         document.body.querySelector("#v-pills-user-tab").setAttribute("class", "nav-link active");
@@ -180,9 +167,7 @@ async function editUser() {
     $('#userEditForm').on("submit", async function (event) {
         event.preventDefault(); // return false
         let userId = Number($(this).find('#edit_id').val())
-        //
-       // console.log(new FormData(event.currentTarget).forEach((value, key) => console.log("key " + key + " value " + value)))
-        let user = getJsonFromUserForm(event.currentTarget)
+        let user = getJsonFromFormData(event.currentTarget)
         console.log(user)
         let response = await fetch('/api/admin/users/' + userId, {
             method: 'PATCH',
@@ -195,25 +180,56 @@ async function editUser() {
         if (response.status === 200) {
             console.log(response)
             await users.addUser(await response.json())
+            await currentUser.updateCurrentUserInfo()
+
             $('#userEditModal').modal('hide');
-            this.reset()
         }
     })
 
 }
 
-function getJsonFromUserForm(form) {
+function getJsonFromFormData(form) {
     let formData = new FormData(form);
-    let user = {
+    return {
         id: formData.get('id'),
-            name : formData.get('name'),
-        lastname : formData.get('lastname'),
+        name: formData.get('name'),
+        lastname: formData.get('lastname'),
         age: formData.get('age'),
-            email: formData.get('email'),
-        password : formData.get('password'),
-        roles : formData.getAll("roles")
+        email: formData.get('email'),
+        password: formData.get('password'),
+        roles: formData.getAll("roles")
 
+    };
+}
+
+async function openNewUserForm() {
+    let select = $('#newUserForm select')
+    select.html('')
+    await select.empty()
+    let domRolesNewUser = $('#roles').empty()
+    allRoles.list.forEach(role => domRolesNewUser.append('<option value="' + role.name + '">' + role.name.slice(5)))
+    await createNewUser()
+}
+
+async function createNewUser() {
+    $('#newUserForm').on("submit", async function (event) {
+        event.preventDefault();
+
+        let newUser = getJsonFromFormData(event.currentTarget)
+        let response = await fetch('/api/admin/users', {
+
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json',
+            },
+
+            body: JSON.stringify(newUser)
+        });
+
+        if (response.status === 200) {
+            await users.addUser(await response.json())
+            $('#adminTab a[href="#nav-usertable"]').tab('show')
         }
-
-    return user;
- }
+    })
+}
