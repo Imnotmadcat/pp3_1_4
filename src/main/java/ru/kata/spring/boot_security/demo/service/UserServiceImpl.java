@@ -45,22 +45,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void saveUser(User newUser) {
-        fixProblemWithRoles(newUser);
-        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        userRepository.save(newUser);
-    }
-
-    private void fixProblemWithRoles(User user) {
-        Set<Role> newRoles = new HashSet<>();
-        for (Role role : user.getRoles()) {
-            newRoles.add(roleRepository.findRoleByName(role.getName()));
-        }
-        user.setRoles(newRoles);
-    }
-
-    @Override
-    @Transactional
     public void deleteUser(int id) {
         userRepository.deleteById(id);
     }
@@ -72,12 +56,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public void saveUser(User newUser) {
+        fixProblemWithRoles(newUser);
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        userRepository.save(newUser);
+    }
+
+    @Override
+    @Transactional
     public void updateUser(User updatedUser) {
         fixProblemWithRoles(updatedUser);
 
         //если пароль не менялся, не делает перекодировку
         User oldUser = findUserById(updatedUser.getId());
-
         if (!(updatedUser.getPassword().equals(oldUser.getPassword()))
                 && (updatedUser.getPassword() != null)
                 && !(updatedUser.getPassword().equals(""))) {
@@ -86,5 +77,19 @@ public class UserServiceImpl implements UserService {
             updatedUser.setPassword(oldUser.getPassword());
         }
         userRepository.save(updatedUser);
+    }
+
+/*   У меня ошибка при редактировании пользователя и создании нового пользователя.
+     Когда я сохраняю таких пользователей, в базу добавляются новые роли,
+     с тем же названием, но другим Id,
+     приходится по имени переназначать на те, что уже есть в базе,
+     есть лучше способ решить эту проблему?
+                                                                */
+    private void fixProblemWithRoles(User updatedOrNewUser) {
+        Set<Role> rolesFromDB = new HashSet<>();
+        for (Role role : updatedOrNewUser.getRoles()) {
+            rolesFromDB.add(roleRepository.findRoleByName(role.getName()));
+        }
+        updatedOrNewUser.setRoles(rolesFromDB);
     }
 }

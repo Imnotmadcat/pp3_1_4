@@ -9,6 +9,7 @@ public interface UserService {
     List<User> findAllUsers();
 
     void saveUser(User user, String[] roles, String password);
+
     void saveUser(User user);
 
     void deleteUser(int id);

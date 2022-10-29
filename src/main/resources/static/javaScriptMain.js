@@ -26,7 +26,6 @@ let currentUser = {
         currentUser.user.roles.forEach(role => roles.push(role.name.slice(5)))
         return roles
     }
-
 }
 
 let allRoles = {
@@ -37,7 +36,6 @@ let allRoles = {
     },
 }
 
-// Объект со всеми пользователями
 let users = {
     userMap: new Map(),
     updateAllUsersInfo: async () => {
@@ -87,7 +85,6 @@ async function updateAllUsersPanel() {
             "<td>" + roles.join(" ") + "</td>" +
             "<td>" + button_edit + " " + button_delete + "</td>" +
             "</tr>"
-
         table.append(row)
     })
 }
@@ -98,7 +95,6 @@ async function changeMainPageIfAdmin() {
     if (currentUser.hasRole("ROLE_ADMIN")) {
         await users.updateAllUsersInfo()
         await allRoles.getAllRoles()
-
         await openDeleteForm()
         await openEditForm()
         await openNewUserForm()
@@ -113,7 +109,6 @@ async function openDeleteForm() {
     await $('#allUsersTable').on('click', '.user-delete-button', function () {
         let userId = Number($(this).attr('data-user-id'))
         let deletingUserInfo = users.userMap.get(userId)
-
         $('#delete_id').val(deletingUserInfo.id)
         $('#delete_name').val(deletingUserInfo.name)
         $('#delete_lastname').val(deletingUserInfo.lastname)
@@ -149,7 +144,6 @@ async function openEditForm() {
     await $('#allUsersTable').on('click', '.user-edit-button', function () {
         let userId = Number($(this).attr('data-user-id'))
         let editingUserInfo = users.userMap.get(userId)
-
         $('#edit_id').val(editingUserInfo.id)
         $('#edit_name').val(editingUserInfo.name)
         $('#edit_lastname').val(editingUserInfo.lastname)
@@ -163,7 +157,6 @@ async function openEditForm() {
 }
 
 async function editUser() {
-
     $('#userEditForm').on("submit", async function (event) {
         event.preventDefault(); // return false
         let userId = Number($(this).find('#edit_id').val())
@@ -181,11 +174,9 @@ async function editUser() {
             console.log(response)
             await users.addUser(await response.json())
             await currentUser.updateCurrentUserInfo()
-
             $('#userEditModal').modal('hide');
         }
     })
-
 }
 
 function getJsonFromFormData(form) {
@@ -198,7 +189,6 @@ function getJsonFromFormData(form) {
         email: formData.get('email'),
         password: formData.get('password'),
         roles: formData.getAll("roles")
-
     };
 }
 
@@ -223,10 +213,8 @@ async function createNewUser() {
             headers: {
                 'Content-Type': 'application/json',
             },
-
             body: JSON.stringify(newUser)
         });
-
         if (response.status === 200) {
             await users.addUser(await response.json())
             $('#adminTab a[href="#nav-usertable"]').tab('show')

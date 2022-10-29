@@ -23,6 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public User loadUserByUsername(String email) throws UsernameNotFoundException {
+        //проверка на изменение самого себя, чтобы не требовалось перепроходить аутентификацию
         Optional<User> user = Optional.ofNullable(userRepository.findUserByEmail(email));
         if (user.isPresent()) {
             id = user.get().getId();

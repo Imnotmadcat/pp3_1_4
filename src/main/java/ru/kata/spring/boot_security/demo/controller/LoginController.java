@@ -12,7 +12,7 @@ public class LoginController {
     }
 
     @GetMapping(value = {"/admin", "/user"})
-    public String adminPage() {
+    public String loadMainPage() {
         return "index";
     }
 }
