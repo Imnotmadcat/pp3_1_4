@@ -9,9 +9,7 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -79,7 +77,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updateUser(User updatedUser) {
         User oldUser = findUserById(updatedUser.getId());
-        Set<Role> newRoles = updatedUser.getRoles();
+        Set<Role> newRoles = new HashSet<>();
+        Iterator<Role> roleIterator =updatedUser.getRoles().iterator();
+        while (roleIterator.hasNext()){
+        newRoles.add(roleRepository.findRoleByName(roleIterator.next().getName()));
+        }
+        updatedUser.setRoles(newRoles);
+        System.out.println(newRoles);
         if (!(passwordEncoder.matches(updatedUser.getPassword(), oldUser.getPassword()))
                 && (updatedUser.getPassword() != null)
                 && !(updatedUser.getPassword().equals(""))) {

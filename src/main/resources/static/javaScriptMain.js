@@ -18,8 +18,7 @@ $(document).ready(async function () {
     await currentUser.updateCurrentUserInfo()
     await showMainPageByRole()
     await openDeleteForm()
-
-
+    await openEditForm()
 });
 
 let currentUser = {
@@ -134,13 +133,11 @@ async function openDeleteForm() {
         $('#delete_age').val(deletingUserInfo.age)
         $('#delete_Email').val(deletingUserInfo.email)
         let domRoles = $('#delete_roles').empty();
-        deletingUserInfo.roles.forEach(role =>domRoles.append('<option value="' + role.name + '">' + role.name.slice(5)))
-
-        console.log(deletingUserInfo.email)
-
+        deletingUserInfo.roles.forEach(role => domRoles.append('<option value="' + role.name + '">' + role.name.slice(5)))
     });
     await deleteUser()
 }
+
 async function deleteUser() {
     $('#userDeleteForm').on("submit", async function (event) {
         event.preventDefault();
@@ -161,4 +158,62 @@ async function deleteUser() {
     })
 }
 
+async function openEditForm() {
+    await $('#allUsersTable').on('click', '.user-edit-button', function () {
+        let userId = Number($(this).attr('data-user-id'))
+        let editingUserInfo = users.userMap.get(userId)
 
+        $('#edit_id').val(editingUserInfo.id)
+        $('#edit_name').val(editingUserInfo.name)
+        $('#edit_lastname').val(editingUserInfo.lastname)
+        $('#edit_age').val(editingUserInfo.age)
+        $('#edit_Email').val(editingUserInfo.email)
+        $('#edit_password').val(editingUserInfo.password)
+        let domRoles = $('#edit_roles').empty();
+        allRoles.list.forEach(role => domRoles.append('<option value="' + role.name + '">' + role.name.slice(5)))
+    });
+    await editUser()
+}
+
+async function editUser() {
+
+    $('#userEditForm').on("submit", async function (event) {
+        event.preventDefault(); // return false
+        let userId = Number($(this).find('#edit_id').val())
+        //
+       // console.log(new FormData(event.currentTarget).forEach((value, key) => console.log("key " + key + " value " + value)))
+        let user = getJsonFromUserForm(event.currentTarget)
+        console.log(user)
+        let response = await fetch('/api/admin/users/' + userId, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(user)
+        });
+        console.log(response)
+        if (response.status === 200) {
+            console.log(response)
+            await users.addUser(await response.json())
+            $('#userEditModal').modal('hide');
+            this.reset()
+        }
+    })
+
+}
+
+function getJsonFromUserForm(form) {
+    let formData = new FormData(form);
+    let user = {
+        id: formData.get('id'),
+            name : formData.get('name'),
+        lastname : formData.get('lastname'),
+        age: formData.get('age'),
+            email: formData.get('email'),
+        password : formData.get('password'),
+        roles : formData.getAll("roles")
+
+        }
+
+    return user;
+ }
