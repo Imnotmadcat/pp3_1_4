@@ -7,12 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class LoginController {
 
     @GetMapping("/login")
-    public String loadLoginPage() {
+    public String getLoginPage() {
         return "login";
     }
 
-    @GetMapping(value = {"/admin", "/user"})
-    public String loadMainPage() {
-        return "index";
-    }
 }

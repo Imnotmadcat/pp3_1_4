@@ -11,7 +11,7 @@ import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import java.util.Optional;
 
 @Component
-@Transactional
+@Transactional(readOnly = true)
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
     private int id;

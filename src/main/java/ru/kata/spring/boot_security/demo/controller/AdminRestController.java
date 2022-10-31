@@ -1,68 +1,63 @@
 package ru.kata.spring.boot_security.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
-import ru.kata.spring.boot_security.demo.service.UserDetailsServiceImpl;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
-public class RestControllers {
+public class AdminRestController {
 
-    private final UserDetailsServiceImpl userDetailsServiceimpl;
     private final UserService userService;
     private final RoleService roleService;
 
-    public RestControllers(UserService userService, RoleService roleService, UserDetailsServiceImpl userDetailsServiceimpl) {
+    public AdminRestController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
-        this.userDetailsServiceimpl = userDetailsServiceimpl;
+    }
+
+    @GetMapping(value = "/admin")
+    public ModelAndView getAdminPage() {
+        return new ModelAndView("adminPanel");
     }
 
 
-    @GetMapping("/admin/roles")
+    @GetMapping("/api/admin/roles")
     public ResponseEntity<List<Role>> getAllRoles() {
         return new ResponseEntity<>(roleService.findAllRoles(), HttpStatus.OK);
     }
 
-    @GetMapping("/admin/users")
+    @GetMapping("/api/admin/users")
     public ResponseEntity<List<User>> getAllUsers() {
         return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
     }
 
-    @GetMapping("/admin/users/{id}")
+    @GetMapping("/api/admin/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable("id") User user) {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PostMapping("/admin/users")
+    @PostMapping("/api/admin/users")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         userService.saveUser(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PatchMapping("/admin/users/{id}")
+    @PatchMapping("/api/admin/users/{id}")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
         userService.updateUser(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @DeleteMapping("/admin/users/{id}")
+    @DeleteMapping("/api/admin/users/{id}")
     public void deleteUser(@PathVariable int id) {
         userService.deleteUser(id);
     }
 
-    @GetMapping("/user")
-    public ResponseEntity<User> getCurrentUser(Principal principal) {
-        return new ResponseEntity<>(userDetailsServiceimpl.loadUserByUsername(principal.getName()), HttpStatus.OK);
-    }
 }
