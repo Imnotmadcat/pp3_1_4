@@ -2,6 +2,7 @@ $(document).ready(async function () {
     await currentUser.updateCurrentUserInfo()
     await changeMainPageIfAdmin()
 
+
 });
 
 let currentUser = {
@@ -29,10 +30,12 @@ let currentUser = {
 }
 
 let allRoles = {
+    allRolesMap: new Map(),
     list: {},
     getAllRoles: async () => {
         allRoles.list = await fetch('/api/admin/roles')
             .then(response => response.json())
+        allRoles.list.forEach(role =>allRoles.allRolesMap.set(role.id, role))
     },
 }
 
@@ -151,7 +154,7 @@ async function openEditForm() {
         $('#edit_Email').val(editingUserInfo.email)
         $('#edit_password').val(editingUserInfo.password)
         let domRoles = $('#edit_roles').empty();
-        allRoles.list.forEach(role => domRoles.append('<option value="' + role.name + '">' + role.name.slice(5)))
+        allRoles.list.forEach(role => domRoles.append('<option value="' + role.id + '">' + role.name.slice(5)))
     });
     await editUser()
 }
@@ -161,7 +164,6 @@ async function editUser() {
         event.preventDefault(); // return false
         let userId = Number($(this).find('#edit_id').val())
         let user = getJsonFromFormData(event.currentTarget)
-        console.log(user)
         let response = await fetch('/api/admin/users/' + userId, {
             method: 'PATCH',
             headers: {
@@ -181,6 +183,10 @@ async function editUser() {
 
 function getJsonFromFormData(form) {
     let formData = new FormData(form);
+    let currentRoles = []
+    formData.getAll('roles').forEach(idd => currentRoles.push(allRoles.allRolesMap.get(Number(idd))))
+    console.log(currentRoles)
+
     return {
         id: formData.get('id'),
         name: formData.get('name'),
@@ -188,7 +194,7 @@ function getJsonFromFormData(form) {
         age: formData.get('age'),
         email: formData.get('email'),
         password: formData.get('password'),
-        roles: formData.getAll("roles")
+        roles:  currentRoles
     };
 }
 
@@ -197,15 +203,18 @@ async function openNewUserForm() {
     select.html('')
     await select.empty()
     let domRolesNewUser = $('#roles').empty()
-    allRoles.list.forEach(role => domRolesNewUser.append('<option value="' + role.name + '">' + role.name.slice(5)))
+    allRoles.list.forEach(role=> console.log(role))
+    allRoles.list.forEach(role=> console.log(role.name))
+    allRoles.list.forEach(role=> console.log(role.id))
+    allRoles.list.forEach(role => domRolesNewUser.append('<option value="' + role.id + '">' + role.name.slice(5)))
     await createNewUser()
 }
 
 async function createNewUser() {
     $('#newUserForm').on("submit", async function (event) {
         event.preventDefault();
-
         let newUser = getJsonFromFormData(event.currentTarget)
+        console.log(newUser)
         let response = await fetch('/api/admin/users', {
 
             method: 'POST',
@@ -217,6 +226,7 @@ async function createNewUser() {
         });
         if (response.status === 200) {
             await users.addUser(await response.json())
+            this.reset()
             $('#adminTab a[href="#nav-usertable"]').tab('show')
         }
     })

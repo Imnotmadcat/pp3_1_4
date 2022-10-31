@@ -11,6 +11,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
+// я не могу убрать энтити граф, без него возникают проблемы
+// с аутентификацией, из-за fetch LAZY
 @NamedEntityGraph(name = "roles",
         attributeNodes = @NamedAttributeNode("roles"))
 public class User implements UserDetails {
